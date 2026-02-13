@@ -373,13 +373,45 @@
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
                 }
 
-                setTimeout(function () {
-                    contactForm.style.display = 'none';
-                    if (formSuccess) {
-                        formSuccess.hidden = false;
-                        formSuccess.style.display = 'block';
+                var formData = new FormData();
+                formData.append('name', (document.getElementById('formName').value || '').trim());
+                formData.append('phone', (document.getElementById('formPhone').value || '').trim());
+                formData.append('email', (document.getElementById('formEmail').value || '').trim());
+                formData.append('service', (document.getElementById('formService').value || ''));
+                var dateEl = document.getElementById('formDate');
+                if (dateEl) formData.append('date', dateEl.value || '');
+                var timeEl = document.getElementById('formTime');
+                if (timeEl) formData.append('time', timeEl.value || '');
+                var msgEl = document.getElementById('formMessage');
+                if (msgEl) formData.append('message', msgEl.value.trim());
+
+                fetch('api/send-booking.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    if (data.success) {
+                        contactForm.style.display = 'none';
+                        if (formSuccess) {
+                            formSuccess.hidden = false;
+                            formSuccess.style.display = 'block';
+                        }
+                    } else {
+                        alert(data.message || 'Something went wrong. Please call us at (408) 427-5318.');
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Request';
+                        }
                     }
-                }, 1200);
+                })
+                .catch(function () {
+                    alert('Could not send your request. Please call us directly at (408) 427-5318.');
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Request';
+                    }
+                });
             }
         });
     }
@@ -614,13 +646,45 @@
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
                 }
 
-                setTimeout(function () {
-                    estimateForm.style.display = 'none';
-                    if (estFormSuccess) {
-                        estFormSuccess.hidden = false;
-                        estFormSuccess.style.display = 'block';
+                var formData = new FormData();
+                formData.append('service', selectedService || '');
+                formData.append('name', (document.getElementById('estName').value || '').trim());
+                formData.append('phone', (document.getElementById('estPhone').value || '').trim());
+                formData.append('email', (document.getElementById('estEmail').value || '').trim());
+                var propEl = document.getElementById('estPropertyType');
+                if (propEl) formData.append('propertyType', propEl.value || '');
+                var urgEl = document.getElementById('estUrgency');
+                if (urgEl) formData.append('urgency', urgEl.value || '');
+                var descEl = document.getElementById('estDescription');
+                if (descEl) formData.append('description', descEl.value.trim());
+
+                fetch('api/send-estimate.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    if (data.success) {
+                        estimateForm.style.display = 'none';
+                        if (estFormSuccess) {
+                            estFormSuccess.hidden = false;
+                            estFormSuccess.style.display = 'block';
+                        }
+                    } else {
+                        alert(data.message || 'Something went wrong. Please call us at (408) 427-5318.');
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Get My Free Estimate';
+                        }
                     }
-                }, 1200);
+                })
+                .catch(function () {
+                    alert('Could not send your request. Please call us directly at (408) 427-5318.');
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Get My Free Estimate';
+                    }
+                });
             }
         });
     }
