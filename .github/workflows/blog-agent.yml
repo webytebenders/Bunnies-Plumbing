@@ -1,0 +1,45 @@
+name: Blog Agent — Auto Post
+
+on:
+  # Runs twice daily at 8:00 AM and 6:00 PM Pacific Time (UTC-8)
+  schedule:
+    - cron: '0 16 * * *'   # 8:00 AM PT = 16:00 UTC
+    - cron: '0 2 * * *'    # 6:00 PM PT = 02:00 UTC next day
+
+  # Allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-blog-post:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r automation/requirements.txt
+
+      - name: Generate blog post
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python automation/blog_agent.py --now
+
+      - name: Commit and push new post
+        run: |
+          git config user.name "Blog Agent"
+          git config user.email "blog-agent@bunniesplumbing.com"
+          git add posts/ blog.html automation/generated_posts.json
+          git diff --staged --quiet && echo "No new changes to commit" && exit 0
+          git commit -m "blog: auto-generated post $(date +'%Y-%m-%d %H:%M')"
+          git push
