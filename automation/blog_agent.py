@@ -241,8 +241,13 @@ def generate_fresh_topic(client, config, tracker):
                 "content": (
                     f"You are a plumbing SEO content strategist for {config['site_name']} "
                     f"in {config['site_location']}. Generate practical, searchable blog topics "
-                    "that homeowners actually Google. Focus on problem-solving content like "
-                    "'how to fix...', 'what to do when...', 'signs of...', 'cost of...'. "
+                    "that homeowners actually Google. Mix between these types: "
+                    "1) Problem-solving content ('how to fix...', 'what causes...', 'signs of...') "
+                    "2) Service-focused content that explains what causes people to need specific "
+                    "plumbing services like trenchless sewer repair, drain cleaning, water heater "
+                    "replacement, gas line repair, crawl space plumbing, emergency plumbing "
+                    "3) Company/trust content about why to choose a licensed plumber, what to expect "
+                    "during a service call, real customer scenarios. "
                     "Topics should naturally lead readers toward needing professional help."
                 ),
             },
@@ -281,7 +286,7 @@ Return your response as valid JSON with these exact keys:
     "meta_description": "Compelling meta description with keyword and CTA (under 155 characters)",
     "keywords": "comma-separated long-tail SEO keywords (6-10 keywords targeting what people search)",
     "excerpt": "2-sentence hook for the blog card — make the reader NEED to click",
-    "category": "One category: Trenchless Technology | Sewer Lines | Drain Cleaning | Water Heaters | Gas Lines | Emergency Tips | Plumbing Tips | Home Maintenance | Repiping | DIY & Prevention",
+    "category": "One category: Trenchless Technology | Sewer Lines | Drain Cleaning | Water Heaters | Gas Lines | Emergency Tips | Plumbing Tips | Home Maintenance | Repiping | DIY & Prevention | Our Services | Company News",
     "content": "The full blog post body as HTML markup (see requirements below)"
 }}
 
@@ -294,6 +299,14 @@ CONTENT QUALITY:
 - Include practical DIY tips where appropriate, but make it clear when professional help is needed
 - Include specific details (temperatures, measurements, timeframes, costs ranges) to build authority
 - Mention {config['site_location']} and Bay Area naturally 2-3 times for local SEO
+
+SERVICE-FOCUSED CONTENT:
+- If the topic relates to a specific service (trenchless, sewer, drain cleaning, water heater, gas lines, crawl space, emergency, water main), EXPLAIN what causes homeowners to need that service
+- Describe real-world scenarios: "You might notice your yard is soggy near the sewer line..." or "If you smell rotten eggs near your gas appliances..."
+- Paint the picture of the problem, explain why it happens, then naturally lead to why professional service is the solution
+- Mention HOW the company performs the service — e.g. for trenchless: "We use pipe bursting technology to replace your old pipe without digging up your yard"
+- Include a comparison of DIY vs professional when relevant — show readers that while they can try basic fixes, certain problems REQUIRE a licensed plumber
+- If the topic is about the company itself (reviews, process, team), write it as an informative, trust-building piece — not a sales pitch
 
 STRUCTURE:
 - Use <h2> for main sections (4-6 sections), <h3> for subsections where needed
@@ -402,6 +415,8 @@ def get_category_icon(category):
         "repiping": "fas fa-random",
         "gas lines": "fas fa-fire",
         "diy & prevention": "fas fa-toolbox",
+        "our services": "fas fa-concierge-bell",
+        "company news": "fas fa-newspaper",
     }
     return icons.get(category.lower(), "fas fa-wrench")
 
